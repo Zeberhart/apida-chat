@@ -8,11 +8,10 @@ Generate domain‑grounded, multi‑turn API‑help dialogues and train a compac
 * Produces a LoRA‑tuned 8 B Llama model that matches teacher quality at a fraction of the cost.
 * Fully modular—swap in your own planner, realiser prompt, or student backbone.
 
-* 🚀 Quick start (Colab)
+# 🚀 Quick start ([Colab](https://colab.research.google.com/drive/1pD0-IA1-yNupKQ-hA68YNxw06JlysbYu?usp=sharing))
 ```
 git clone https://github.com/<you>/APIDA-chat.git
 cd APIDA-chat
-pip install -r requirements.txt            # or conda env create -f environment.yml
 
 # 1. plan dialogue‑act scripts
 python planners/plan_dialogues.py \
@@ -43,7 +42,7 @@ python realisers/realise_llama.py \
        --out_file data/dialogues_llama.jsonl
 ```
 
-🗄 Repository layout
+# 🗄 Repository layout
 ```
 APIDA-chat/
 │  README.md
