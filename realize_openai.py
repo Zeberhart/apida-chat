@@ -13,8 +13,6 @@ python realize_openai.py \
 import argparse, json, os, pathlib, sys
 from openai import OpenAI
 from tqdm import tqdm
-from dotenv import load_dotenv
-load_dotenv()
 
 client = OpenAI()  # expects OPENAI_API_KEY env var
 
