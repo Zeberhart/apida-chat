@@ -79,7 +79,7 @@ class DefaultEnv(Env):
             "turns": Discrete(self.MAX_TURNS+1),
             "results": Box(low=np.zeros(self.dataset.getDatabaseSize()), high=np.ones(self.dataset.getDatabaseSize())),
         })
-        self.observation_space.shape = (flatdim(self.observation_space),)
+        self.observation_space_shape = (flatdim(self.observation_space),)
 
     def buildActionSpace(self):
         """
@@ -89,7 +89,7 @@ class DefaultEnv(Env):
         self.action_space = Dict({
             "action": Discrete(len(self.AGENT_TYPES)), 
         })
-        self.action_space.shape = (len(self.action_types),)
+        self.action_space_shape = (len(self.action_types),)
 
     def reset(self):
         """
@@ -543,11 +543,11 @@ class DefaultEnv(Env):
 
     @property
     def nb_obs(self):
-        return self.observation_space.shape
+        return self.observation_space_shape
 
     @property
     def nb_actions(self):
-        return self.action_space.shape
+        return self.action_space_shape
 
     @property 
     def last_user_action(self):

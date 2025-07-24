@@ -48,7 +48,7 @@ class Dataset:
         self.num_functions  = len(self.function_list)
 
         self.tfidf_vectorizer = self.buildTfidfVectorizer()
-        self.feature_names = self.tfidf_vectorizer.get_feature_names()
+        self.feature_names = self.tfidf_vectorizer.get_feature_names_out()
         self.functions_tfidf = self.buildTfidfDict()
         self.function_search_vectors = self.buildFunctionSearchMatrix() 
 

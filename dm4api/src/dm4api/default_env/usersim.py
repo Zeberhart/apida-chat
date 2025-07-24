@@ -357,7 +357,7 @@ class UserSim:
 
 
         if (self.constraints["out_of_results_known"] and self.constraints["incorrect_keywords"]):
-            keyword = self.init_randomizer.sample(self.constraints["incorrect_keywords"], 1)[0]
+            keyword = self.init_randomizer.sample(list(self.constraints["incorrect_keywords"]), 1)[0]
             self.constraints["incorrect_keywords"].remove(keyword)
             self.constraints["list_current"] = False
             self.constraints["out_of_results_known"] = False
@@ -418,7 +418,7 @@ class UserSim:
                     else:
                         # Unprompted, fixing incorrect keywords
                         if self.constraints["incorrect_keywords"]:
-                            keyword = self.init_randomizer.sample(self.constraints["incorrect_keywords"], 1)[0]
+                            keyword = self.init_randomizer.sample(list(self.constraints["incorrect_keywords"]), 1)[0]
                             self.constraints["incorrect_keywords"].remove(keyword)
                             user_action["keywords"] = [keyword]
                             user_action["action"] = "reject-kws"
