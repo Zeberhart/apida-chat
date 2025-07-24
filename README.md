@@ -5,7 +5,7 @@ Generate domain‑grounded, multi‑turn API‑help dialogues and train a compac
 * Planner → Realiser → Fine‑tune three‑stage pipeline (Figure 1 in the paper).
 * Ships a legacy dialogue planner for instant Allegro‑5 experiments.
 * One‑command scripts for each stage; works in Colab or locally.
-* Produces a LoRA‑tuned 8 B Llama model that matches teacher quality at a fraction of the cost.
+* Produces a LoRA‑tuned 3 B Llama model that matches teacher quality at a fraction of the cost.
 * Fully modular—swap in your own planner, realiser prompt, or student backbone.
 
 # 🚀 Quick start ([Colab](https://colab.research.google.com/drive/1pD0-IA1-yNupKQ-hA68YNxw06JlysbYu?usp=sharing))
@@ -28,7 +28,7 @@ python realisers/realise_openai.py \
        --model o4-mini-2025-04-16 \
        --out_file data/dialogues_openai.jsonl
 
-# 3. fine‑tune Llama‑3.1 8B
+# 3. fine‑tune Llama‑3.2 3B
 python finetune/fine_tune_llama.py \
        --data_file data/dialogues_openai.jsonl \
        --output_dir outputs/llama_finetuned
