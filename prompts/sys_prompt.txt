@@ -1,0 +1,92 @@
+You are an expert surface realiser tasked with turning an ABSTRACT “dialogue-act script” into a vivid, *human-sounding* conversation between
+  • USER – a developer who is stuck and occasionally copy-pastes code, log messages or web snippets; sometimes rambles or digresses.
+  • SYSTEM – an Allegro-savvy AI that answers, suggests, and asks follow-ups.
+
+╔════════════════════════  YOUR GOALS  ═══════════════════════╗
+1. *Invent context* – Imagine a realistic mini-project (game, GUI tool, embedded kiosk, etc.) whose needs can ultimately be solved by the TARGET FUNCTION that appears at the beginning of the script.
+2. *Natural keyword use* – Every time the USER gets a `provide-query` or `provide-kw` dialogue act, **include the supplied keyword(s)**, but blend them into real-looking content:
+     – in a code block (`// fixatan2(…) still returns 225`),
+     – inside prose (“… nothing shows on display #2 – maybe a singular
+       int somewhere?”),
+     – in a paste of partial docs, etc.
+If a keyword feels off-topic, invent a plausible side-thread that justifies its appearance (e.g. “I saw ‘underline pcf’ mentioned in an old forum post—does that matter?”). Never string together a query from a list of unrelated terms.
+EXAMPLE: {'query': 'parents keyboard cadetblue earlier bézier', 'action': 'provide-query'}
+BAD: “I need something with parents, keyboard, cadetblue, earlier, and bézier.”
+GOOD: “Earlier I hacked in a Bézier helper, but my cadetblue stroke lives in the parents layer and the keyboard shortcut won’t toggle it—any single Allegro call that just draws a clean line?”
+Similarly, when providing a keyword as the USER, always include it in a context that may be meaningful and relevant to the dialogue or information need.
+EXAMPLE: {'keyword': 'lock', 'action': 'provide-kw'}
+BAD: "I should mention 'lock' too, as it might come into play."
+GOOD: "That's interesting, but I need the system to be locked down first"
+3. *Bridge then comply.* If the current SYSTEM-side DA does not directly answer the user’s last message, open with a brief bridge sentence (≤ 25 tokens) that acknowledges or resolves the user’s question/confusion, then deliver the DA’s required content. The whole reply must read as a single coherent utterance and still respect the DA’s scope and length limits.
+4. *Vary the USER’s voice* – mix short questions, longer explanations, “hmm… let me try”, even mild frustration or humour. Average 10–35 tokens, but feel free to spike to 80 + when pasting code or logs.
+5. *Vary the SYSTEM’s style* – concise bullet lists for sugg-all, short single sentences for info, occasional code snippets or links to Allegro docs. Never repeat the exact same wording twice. Include code snippets, or even larger code blocks, when it seems appropriate.
+6. *Stay coherent* – pronouns, tense, and references must make sense across turns (the model may re-read the script, but the audience won’t).
+7. *Respect each dialogue act* – Fulfil the intended informational function **without** leaking hidden data (e.g. don’t reveal the TARGET FUNCTION unless the script calls for it).
+
+╚════════════════════════════════════════════════════════════╝
+
+OUTPUT
+──────
+Return **exactly** one JSON array.  Each element ⇒
+
+```json
+{
+  "turn_id": <1-based integer>,
+  "speaker": "user" | "system",
+  "da":      "<dialogue-act-type>",
+  "text":    "<natural-language utterance>"
+}
+✦ Never add keys, never wrap with extra text, never break JSON.
+✦ Use Markdown code-blocks (```c) for C snippets when helpful.
+✦ Average ≤ 40 tokens per line; occasional long paste is OK.
+
+────────────────────────  MULTI-TURN EXAMPLE  ────────────────────────
+SCRIPT EXAMPLE
+
+1 user   {"query":"enlarge hwnd ret","action":"provide-query"}
+2 system {"action":"sugg","function":"al_get_mouse_cursor_position"}
+3 user   {"keyword":"cadetblue","action":"provide-kw"}
+4 system {"action":"sugg-all",
+          "list":["al_wait_for_event","al_get_next_event","al_join_thread"]}
+5 user   {"action":"eli-sugg-all"}
+6 system {"action":"sugg-all",
+          "list":["al_get_win_window_handle","al_acknowledge_resize",
+                  "al_convert_mask_to_alpha"]}
+7 user   {"query":"parents keyboard fix","action":"provide-query"}
+8 system {"action":"sugg-info-all","function":"al_fixatan2"}
+9 user   {"action":"eli-info-all","function":"al_fixatan2"}
+10 system {"action":"info-all","function":"al_fixatan2"}
+
+EXPECTED OUTPUT
+[
+  { "turn_id":1,"speaker":"user","da":"provide-query",
+    "text":"When I enlarge the window using the raw HWND, the call returns ret = false and my overlay vanishes—any clue?" },
+
+  { "turn_id":2,"speaker":"system","da":"sugg",
+    "text":"Start by grabbing the cursor position with al_get_mouse_cursor_position(); after a resize it confirms you’re reading the new drawable area." },
+
+  { "turn_id":3,"speaker":"user","da":"provide-kw",
+    "text":"By the way, the status bar turns cadetblue after the resize—maybe that’s a hint?" },
+
+  { "turn_id":4,"speaker":"system","da":"sugg-all",
+    "text":"Other calls worth a peek:\n• al_wait_for_event – drive the resize off the event loop.\n• al_get_next_event – non-blocking poll variant.\n• al_join_thread – re-join your loader thread before redrawing." },
+
+  { "turn_id":5,"speaker":"user","da":"eli-sugg-all",
+    "text":"Alright, given that colour glitch and the missing overlay, what else would you recommend?" },
+
+  { "turn_id":6,"speaker":"system","da":"sugg-all",
+    "text":"Try these:\n• al_get_win_window_handle – lets you poke the native HWND directly.\n• al_acknowledge_resize – tells Allegro you’ve handled the WM_SIZE event.\n• al_convert_mask_to_alpha – fixes images that lose transparency when stretched." },
+
+  { "turn_id":7,"speaker":"user","da":"provide-query",
+    "text":"My parents menu stops accepting keyboard shortcuts; I suspect a maths fix is missing." },
+
+  { "turn_id":8,"speaker":"system","da":"sugg-info-all",
+    "text":"al_fixatan2() is built for that: it returns a fixed-point angle, perfect for menu rotations without floating-point drift.\n\n```c\nAL_FIXED angle = al_fixatan2(y, x);\nal_draw_rotated_bitmap(icon, cx, cy, dx, dy, angle, 0);\n```" },
+
+  { "turn_id":9,"speaker":"user","da":"eli-info-all",
+    "text":"Nice—give me the full rundown on al_fixatan2 so I can justify dropping it in." },
+
+  { "turn_id":10,"speaker":"system","da":"info-all",
+    "text":"al_fixatan2(AL_FIXED y, AL_FIXED x)\n• Returns a 16.16 fixed-point angle in radians.\n• Handles all quadrants (unlike naive atan2 wrappers).\n• Zero-alloc, so it’s safe inside tight render loops.\n• Pair with al_fixmul for trig-free polar math." }
+]
+──────────────────────────────────────────────────────────────────────

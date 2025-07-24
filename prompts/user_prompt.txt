@@ -1,0 +1,52 @@
+You are an expert surface realizer for a task-oriented dialogue between
+  • USER   – a programmer trying to locate the right Allegro 5.0 function
+  • SYSTEM – an AI search assistant that recommends functions and explains them.
+
+Below is a **SCRIPT**: an ordered list of abstract dialogue acts (DAs) that
+specify what each side must accomplish at every turn.  
+Your job: for **every** DA in the script, produce a natural-language
+utterance that faithfully performs that act.
+
+╭──────────────────────────── ACT DEFINITIONS ────────────────────────────╮
+SYSTEM-side DAs
+  info          – Succinctly answer the question.
+  info-all      – Broader summary of docs & context.
+  sugg          – Recommend ONE function/idea with brief rationale.
+  sugg-all      – Recommend several; short rationale per item.
+  sugg-info-all – Recommend something **and** give full overview.
+  eli-query     – Politely ask the user for clarifying details.
+  eli-kw        – Suggest keywords that could refine the search.
+  change-page   – Present more candidate functions/ideas.
+
+USER-side DAs
+  provide-query – Ask something using the given keyword list.
+  provide-kw    – Say (or type) the provided keyword.
+  reject-kws    – Explicitly rule out the listed keywords.
+  reject-functions – Explicitly rule out the listed functions.
+  change-page   – Ask for more results (no new info).
+  eli-info      – Ask a *specific* question about the given function.
+  eli-info-all  – Ask for a broad summary of that function.
+  eli-sugg      – Ask the system to pick the single best function.
+  eli-sugg-all  – Ask for a refreshed list of candidate functions.
+  dont-know     – Express confusion; invite system guidance.
+
+╰─────────────────────────────────────────────────────────────────────────╯
+
+GLOBAL GUIDELINES
+▪ Keep utterances realistic and concise (≈ 1–3 lines, ≤ 40 tokens).  
+▪ In addition to the SCRIPT, you will be provided with the secret TARGET FUNCTION -- this is the function that will optimally satisfy the USER'S requirments. The USER should **never** mention the secret TARGET FUNCTION by name unless the script tells them to (they do not know it). Ho
+▪ When a SYSTEM “sugg-all” DA mentions several functions, format them as a bulleted list.  
+▪ When the script starts with an "eli-sugg" or "eli-sugg-all" act from the USER and no earlier turns exist, make the USER ask a broad, high-level “where do I start?” question that only hints at their need. If the SYSTEM is made to generate a "sugg", "sugg-all", or "sugg-info-all" act before a query or keyword has been provided,it should provide an equally high-level roadmap or set of themes — no specific function names — just the areas of the library to explore. 
+▪ After a query or keywords have been provided, if the system ever generates a "sugg", "sugg-all", "sugg-info-all", or "change-page" act with no corresponding functions provided, it should indicate that it isn't finding great results.
+▪ Maintain coherence across turns—pronouns, ellipsis, acknowledgments, etc.—
+  but do **not** invent content not implied by the script or Allegro docs.  
+▪ Use normal markdown only when helpful (e.g., `code`, *italics*).  
+▪ The Allegro API is in C; prefer the library’s naming style (`al_draw_bitmap`).
+
+
+──────────────────────── BEGIN SCRIPT ────────────────────────
+[REVEAL TARGET FUNCTION]
+[REPLACE WITH SCRIPT]
+──────────────────────── END SCRIPT ────────────────────────
+
+Produce the JSON now.
